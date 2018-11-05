@@ -102,7 +102,7 @@ int main()
 		// TODO: Draw UI objects
 
 		// Display the window contents on the screen
-		gameWindow.display();//huguyguf
+		gameWindow.display();
 
 	} // End of Game Loop
 	return 0;
