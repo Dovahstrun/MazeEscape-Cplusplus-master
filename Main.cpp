@@ -14,13 +14,14 @@
 #include "Baddy.h"
 #include "score.h"
 #include "Coin.h"
+#include "Key.h"
 
 // The main() Function - entry point for our program
 int main()
 {
-	// -----------------------------------------------
-	// Game Setup
-	// -----------------------------------------------
+	///-------------------------------------------------
+	///SETUP
+	///-------------------------------------------------
 
 	// Window - to draw to the screen
 	sf::RenderWindow gameWindow;
@@ -44,15 +45,25 @@ int main()
 	// Create test objects
 	Player ourPlayer;
 	Coin ourCoin;
+	Score ourScore;
+	ourScore.SetPlayer(&ourPlayer);
+	Key ourKey;
+	Exit ourExit;
+	ourExit.SetPlayer(&ourPlayer);
 
-	// -----------------------------------------------
-	// Game Loop
-	// -----------------------------------------------
+
+	///-------------------------------------------------
+	///END SETUP
+	///-------------------------------------------------
+
+	///-------------------------------------------------
+	///GAME LOOP
+	///-------------------------------------------------
 	while (gameWindow.isOpen())
 	{
-		// -----------------------------------------------
-		// Input Section
-		// -----------------------------------------------
+		///---------------------------------------------
+		///INPUT
+		///---------------------------------------------
 
 		// Check all events since the last frame and process 
 		// each one until there are no more
@@ -71,9 +82,16 @@ int main()
 
 		} // End event polling loop
 
-		// -----------------------------------------------
-		// Update Section
-		// -----------------------------------------------
+		///---------------------------------------------
+		///END INPUT
+		///---------------------------------------------
+
+
+
+		///---------------------------------------------
+		///UPDATE
+		///---------------------------------------------
+
 		// Get the time passed since the last frame and restart our game clock
 		sf::Time frameTime = gameClock.restart();
 
@@ -85,6 +103,18 @@ int main()
 		if (ourCoin.isActive())
 		{
 			ourCoin.Update(frameTime);
+		}
+		if (ourScore.isActive())
+		{
+			ourScore.Update(frameTime);
+		}
+		if (ourKey.isActive())
+		{
+			ourKey.Update(frameTime);
+		}
+		if (ourExit.isActive())
+		{
+			ourExit.Update(frameTime);
 		}
 
 		// -----------------------------------------------
@@ -100,10 +130,23 @@ int main()
 			}
 		}
 
+		if (ourKey.isActive() && ourPlayer.isActive())
+		{
+			if (ourKey.GetBounds().intersects(ourPlayer.GetBounds()))
+			{
+				ourKey.Collide(ourPlayer);
+			}
+		}
 
-		// -----------------------------------------------
-		// Draw Section
-		// -----------------------------------------------
+		///---------------------------------------------
+		///END UPDATE
+		///---------------------------------------------
+
+
+
+		///---------------------------------------------
+		///DRAW
+		///---------------------------------------------
 		// Clear the window to a single colour
 		gameWindow.clear(sf::Color::Black);
 
@@ -114,15 +157,27 @@ int main()
 			ourPlayer.Draw(gameWindow);
 		if (ourCoin.isActive())
 			ourCoin.Draw(gameWindow);
+		if (ourKey.isActive())
+			ourKey.Draw(gameWindow);
+		if (ourExit.isActive())
+			ourExit.Draw(gameWindow);
+
 
 		// Draw UI to the window
 		gameWindow.setView(gameWindow.getDefaultView());
 		// TODO: Draw UI objects
+		if (ourScore.isActive())
+			ourScore.Draw(gameWindow);
 
 		// Display the window contents on the screen
 		gameWindow.display();
 
+		///---------------------------------------------
+		///END DRAW
+		///---------------------------------------------
+
 	} // End of Game Loop
+
 	return 0;
 
 } // End of main() Function

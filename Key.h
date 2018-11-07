@@ -3,11 +3,11 @@
 // Project Includes
 #include "Pickup.h"
 
-class Coin : public Pickup
+class Key : public Pickup
 {
 public:
 
-	Coin();
+	Key();
 
 private:
 

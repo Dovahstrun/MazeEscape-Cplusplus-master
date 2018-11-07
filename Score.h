@@ -1,6 +1,7 @@
 #pragma once
 
 #include "TextObject.h"
+#include "Player.h"
 
 class Score : public TextObject
 {
@@ -9,10 +10,14 @@ public:
 
 	Score();
 
-	//void Update(sf::Time _frameTime);
+	//Overriding Methods
+	virtual void Update(sf::Time _frameTime);
 
-protected:
+	//Public Score Methods
+	void SetPlayer(Player* _player);
 
+private:
 
+	Player* m_player;
 
 };
