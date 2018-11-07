@@ -50,6 +50,7 @@ int main()
 	Key ourKey;
 	Exit ourExit;
 	ourExit.SetPlayer(&ourPlayer);
+	Wall ourWall;
 
 
 	///-------------------------------------------------
@@ -95,6 +96,11 @@ int main()
 		// Get the time passed since the last frame and restart our game clock
 		sf::Time frameTime = gameClock.restart();
 
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
+		{
+			return 0;
+		}
+
 		// TODO: Update all game objects
 		if (ourPlayer.isActive())
 		{
@@ -115,6 +121,10 @@ int main()
 		if (ourExit.isActive())
 		{
 			ourExit.Update(frameTime);
+		}
+		if (ourWall.isActive())
+		{
+			ourWall.Update(frameTime);
 		}
 
 		// -----------------------------------------------
@@ -137,6 +147,13 @@ int main()
 				ourKey.Collide(ourPlayer);
 			}
 		}
+		if (ourWall.isActive() && ourPlayer.isActive())
+		{
+			if (ourWall.GetBounds().intersects(ourPlayer.GetBounds()))
+			{
+				ourPlayer.Collide(ourWall);
+			}
+		}
 
 		///---------------------------------------------
 		///END UPDATE
@@ -153,14 +170,17 @@ int main()
 		// Draw game world to the window
 		gameWindow.setView(camera);
 		// TODO: Draw game objects
+		if (ourExit.isActive())
+			ourExit.Draw(gameWindow);
 		if (ourPlayer.isActive())
 			ourPlayer.Draw(gameWindow);
 		if (ourCoin.isActive())
 			ourCoin.Draw(gameWindow);
 		if (ourKey.isActive())
 			ourKey.Draw(gameWindow);
-		if (ourExit.isActive())
-			ourExit.Draw(gameWindow);
+		if (ourWall.isActive())
+			ourWall.Draw(gameWindow);
+		
 
 
 		// Draw UI to the window

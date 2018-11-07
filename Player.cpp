@@ -1,6 +1,7 @@
 // Project Includes
 #include "Player.h"
 #include "AssetManager.h"
+#include "Wall.h"
 
 //Constants
 #define SPEED 500.0f
@@ -41,6 +42,26 @@ void Player::Update(sf::Time _frameTime)
 	//Call the update function manually on the player class. This will actually move the character
 	MovingObject::Update(_frameTime);
 
+}
+
+void Player::Collide(GameObject & _collider)
+{
+	//Only do something if thing touched was player
+
+	//Dynamic cast the gameObject reference into a wall pointer
+	//If it succeeds, it was a wall
+	Wall* wallCollider = dynamic_cast<Wall*>(&_collider);
+
+	//If it was a wall we need to move ourselves outside the walls bounds, AKA back where we were
+	if (wallCollider != nullptr)
+	{
+		//the player did hit a wall
+
+		//Go back to the position that the player was in before
+		m_sprite.setPosition(m_oldPosition);
+
+		//Clumsy, results in sticky walls but good enough for this game
+	}
 }
 
 int Player::GetScore()
