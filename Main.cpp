@@ -44,18 +44,25 @@ int main()
 
 	// Create test objects
 	Player ourPlayer;
+	ourPlayer.SetPosition(0.0f, 0.0f);
 	Coin ourCoin;
+	ourCoin.SetPosition(300.0f, 300.0f);
 	Score ourScore;
 	ourScore.SetPlayer(&ourPlayer);
 	Key ourKey;
+	ourKey.SetPosition(750.0f, 500.0f);
 	Exit ourExit;
+	ourExit.SetPosition(1000.0f, 150.0f);
 	ourExit.SetPlayer(&ourPlayer);
 	Wall ourWall;
+	ourWall.SetPosition(700.0f, 800.0f);
 
 
 	///-------------------------------------------------
 	///END SETUP
 	///-------------------------------------------------
+
+
 
 	///-------------------------------------------------
 	///GAME LOOP
