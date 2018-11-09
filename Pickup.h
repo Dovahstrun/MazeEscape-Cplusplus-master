@@ -16,4 +16,9 @@ public:
 private:
 
 	virtual void OnPickup(Player& _player);
+
+protected:
+
+	//Data
+	sf::Sound m_pickupSound;
 };

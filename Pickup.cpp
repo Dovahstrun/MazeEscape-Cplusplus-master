@@ -4,6 +4,7 @@
 
 Pickup::Pickup()
 	: SpriteObject()
+	, m_pickupSound()
 {
 
 }
