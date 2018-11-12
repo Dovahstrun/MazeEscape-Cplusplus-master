@@ -42,21 +42,55 @@ int main()
 	// Game camera
 	sf::View camera = gameWindow.getDefaultView();
 
+	//Game object lists
+	std::vector<GameObject*> updateList;
+	std::vector<GameObject*> drawSpriteList;
+	std::vector<GameObject*> drawUIList;
+
+	std::vector<std::pair<GameObject*, GameObject*> > collisionList;
+
 	// Create test objects
+
 	Player ourPlayer;
 	ourPlayer.SetPosition(0.0f, 0.0f);
+	updateList.push_back(&ourPlayer);
+	
+
 	Coin ourCoin;
 	ourCoin.SetPosition(300.0f, 300.0f);
+	updateList.push_back(&ourCoin);
+	collisionList.push_back(std::make_pair(&ourCoin, &ourPlayer));
+	
+
 	Score ourScore;
 	ourScore.SetPlayer(&ourPlayer);
+	updateList.push_back(&ourScore);
+	drawUIList.push_back(&ourScore);
+
 	Key ourKey;
 	ourKey.SetPosition(750.0f, 500.0f);
+	updateList.push_back(&ourKey);
+	collisionList.push_back(std::make_pair(&ourKey, &ourPlayer));
+	
+
 	Exit ourExit;
 	ourExit.SetPosition(1000.0f, 150.0f);
 	ourExit.SetPlayer(&ourPlayer);
+	updateList.push_back(&ourExit);
+	
+
 	Wall ourWall;
 	ourWall.SetPosition(700.0f, 800.0f);
+	updateList.push_back(&ourWall);
+	collisionList.push_back(std::make_pair(&ourPlayer, &ourWall));
+	
 
+	//Add objects to draw lists
+	drawSpriteList.push_back(&ourCoin);
+	drawSpriteList.push_back(&ourKey);
+	drawSpriteList.push_back(&ourExit);
+	drawSpriteList.push_back(&ourWall);
+	drawSpriteList.push_back(&ourPlayer);
 
 	///-------------------------------------------------
 	///END SETUP
@@ -108,58 +142,32 @@ int main()
 			return 0;
 		}
 
-		// TODO: Update all game objects
-		if (ourPlayer.isActive())
+		//Update all game objects
+		for (int i = 0; i < updateList.size(); ++i)
 		{
-			ourPlayer.Update(frameTime);
-		}
-		if (ourCoin.isActive())
-		{
-			ourCoin.Update(frameTime);
-		}
-		if (ourScore.isActive())
-		{
-			ourScore.Update(frameTime);
-		}
-		if (ourKey.isActive())
-		{
-			ourKey.Update(frameTime);
-		}
-		if (ourExit.isActive())
-		{
-			ourExit.Update(frameTime);
-		}
-		if (ourWall.isActive())
-		{
-			ourWall.Update(frameTime);
+			if (updateList[i]->isActive())
+			{
+				updateList[i]->Update(frameTime);
+			}
 		}
 
 		// -----------------------------------------------
 		// Collision Section
 		// -----------------------------------------------
 
-		// TODO: Collision detection
-		if (ourCoin.isActive() && ourPlayer.isActive())
+		for (int i = 0; i < collisionList.size(); ++i)
 		{
-			if (ourCoin.GetBounds().intersects(ourPlayer.GetBounds()))
-			{
-				ourCoin.Collide(ourPlayer);
-			}
-		}
+			GameObject* handler = collisionList[i].first;
+			GameObject* collider = collisionList[i].second;
 
-		if (ourKey.isActive() && ourPlayer.isActive())
-		{
-			if (ourKey.GetBounds().intersects(ourPlayer.GetBounds()))
-			{
-				ourKey.Collide(ourPlayer);
-			}
-		}
-		if (ourWall.isActive() && ourPlayer.isActive())
-		{
-			if (ourWall.GetBounds().intersects(ourPlayer.GetBounds()))
-			{
-				ourPlayer.Collide(ourWall);
-			}
+
+			if (handler->isActive() && collider->isActive())
+				{
+					if (handler->GetBounds().intersects(collider->GetBounds()))
+					{
+						handler->Collide(*collider);
+					}
+				}
 		}
 
 		///---------------------------------------------
@@ -176,25 +184,27 @@ int main()
 
 		// Draw game world to the window
 		gameWindow.setView(camera);
-		// TODO: Draw game objects
-		if (ourExit.isActive())
-			ourExit.Draw(gameWindow);
-		if (ourPlayer.isActive())
-			ourPlayer.Draw(gameWindow);
-		if (ourCoin.isActive())
-			ourCoin.Draw(gameWindow);
-		if (ourKey.isActive())
-			ourKey.Draw(gameWindow);
-		if (ourWall.isActive())
-			ourWall.Draw(gameWindow);
+		//Draw game objects
+		for (int i = 0; i < drawSpriteList.size(); ++i)
+		{
+			if (drawSpriteList[i]->isActive())
+			{
+				drawSpriteList[i]->Draw(gameWindow);
+			}
+		}
 		
 
 
 		// Draw UI to the window
 		gameWindow.setView(gameWindow.getDefaultView());
-		// TODO: Draw UI objects
-		if (ourScore.isActive())
-			ourScore.Draw(gameWindow);
+		//Draw UI objects
+		for (int i = 0; i < drawUIList.size(); ++i)
+		{
+			if (drawUIList[i]->isActive())
+			{
+				drawUIList[i]->Draw(gameWindow);
+			}
+		}
 
 		// Display the window contents on the screen
 		gameWindow.display();
