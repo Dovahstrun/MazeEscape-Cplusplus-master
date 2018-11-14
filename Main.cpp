@@ -8,13 +8,7 @@
 
 // Project Includes
 #include "AssetManager.h"
-#include "Wall.h"
-#include "Exit.h"
-#include "Player.h"
-#include "Baddy.h"
-#include "score.h"
-#include "Coin.h"
-#include "Key.h"
+#include "Level.h"
 
 // The main() Function - entry point for our program
 int main()
@@ -36,61 +30,8 @@ int main()
 	// Game Clock - to keep track of time passed each frame
 	sf::Clock gameClock;
 
-	// Game state
-	bool playing = false;
-
-	// Game camera
-	sf::View camera = gameWindow.getDefaultView();
-
-	//Game object lists
-	std::vector<GameObject*> updateList;
-	std::vector<GameObject*> drawSpriteList;
-	std::vector<GameObject*> drawUIList;
-
-	std::vector<std::pair<GameObject*, GameObject*> > collisionList;
-
-	// Create test objects
-
-	Player ourPlayer;
-	ourPlayer.SetPosition(0.0f, 0.0f);
-	updateList.push_back(&ourPlayer);
-	
-
-	Coin ourCoin;
-	ourCoin.SetPosition(300.0f, 300.0f);
-	updateList.push_back(&ourCoin);
-	collisionList.push_back(std::make_pair(&ourCoin, &ourPlayer));
-	
-
-	Score ourScore;
-	ourScore.SetPlayer(&ourPlayer);
-	updateList.push_back(&ourScore);
-	drawUIList.push_back(&ourScore);
-
-	Key ourKey;
-	ourKey.SetPosition(750.0f, 500.0f);
-	updateList.push_back(&ourKey);
-	collisionList.push_back(std::make_pair(&ourKey, &ourPlayer));
-	
-
-	Exit ourExit;
-	ourExit.SetPosition(1000.0f, 150.0f);
-	ourExit.SetPlayer(&ourPlayer);
-	updateList.push_back(&ourExit);
-	
-
-	Wall ourWall;
-	ourWall.SetPosition(700.0f, 800.0f);
-	updateList.push_back(&ourWall);
-	collisionList.push_back(std::make_pair(&ourPlayer, &ourWall));
-	
-
-	//Add objects to draw lists
-	drawSpriteList.push_back(&ourCoin);
-	drawSpriteList.push_back(&ourKey);
-	drawSpriteList.push_back(&ourExit);
-	drawSpriteList.push_back(&ourWall);
-	drawSpriteList.push_back(&ourPlayer);
+	//Create the game level
+	Level ourLevel;
 
 	///-------------------------------------------------
 	///END SETUP
@@ -101,15 +42,17 @@ int main()
 	///-------------------------------------------------
 	///GAME LOOP
 	///-------------------------------------------------
-	while (gameWindow.isOpen())
+
+	while (gameWindow.isOpen()) //Beginning of the game loop
 	{
 		///---------------------------------------------
 		///INPUT
 		///---------------------------------------------
 
-		// Check all events since the last frame and process 
-		// each one until there are no more
-		sf::Event gameEvent;
+		// Check all events since the last frame and process each one until there are no more
+
+		sf::Event gameEvent; //A variable to store any event
+
 		while (gameWindow.pollEvent(gameEvent))
 		{
 			// TODO: Pass event to input objects
@@ -137,38 +80,14 @@ int main()
 		// Get the time passed since the last frame and restart our game clock
 		sf::Time frameTime = gameClock.restart();
 
+		//End the game when escape is pressed
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
 		{
 			return 0;
 		}
 
-		//Update all game objects
-		for (int i = 0; i < updateList.size(); ++i)
-		{
-			if (updateList[i]->isActive())
-			{
-				updateList[i]->Update(frameTime);
-			}
-		}
-
-		// -----------------------------------------------
-		// Collision Section
-		// -----------------------------------------------
-
-		for (int i = 0; i < collisionList.size(); ++i)
-		{
-			GameObject* handler = collisionList[i].first;
-			GameObject* collider = collisionList[i].second;
-
-
-			if (handler->isActive() && collider->isActive())
-				{
-					if (handler->GetBounds().intersects(collider->GetBounds()))
-					{
-						handler->Collide(*collider);
-					}
-				}
-		}
+		//Pass update to level
+		ourLevel.Update(frameTime);
 
 		///---------------------------------------------
 		///END UPDATE
@@ -179,32 +98,13 @@ int main()
 		///---------------------------------------------
 		///DRAW
 		///---------------------------------------------
+
 		// Clear the window to a single colour
 		gameWindow.clear(sf::Color::Black);
 
-		// Draw game world to the window
-		gameWindow.setView(camera);
-		//Draw game objects
-		for (int i = 0; i < drawSpriteList.size(); ++i)
-		{
-			if (drawSpriteList[i]->isActive())
-			{
-				drawSpriteList[i]->Draw(gameWindow);
-			}
-		}
-		
 
-
-		// Draw UI to the window
-		gameWindow.setView(gameWindow.getDefaultView());
-		//Draw UI objects
-		for (int i = 0; i < drawUIList.size(); ++i)
-		{
-			if (drawUIList[i]->isActive())
-			{
-				drawUIList[i]->Draw(gameWindow);
-			}
-		}
+		//Pass draw to level
+		ourLevel.Draw(gameWindow);
 
 		// Display the window contents on the screen
 		gameWindow.display();
