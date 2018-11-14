@@ -36,6 +36,11 @@ void GameObject::SetPosition(float _x, float _y)
 
 }
 
+sf::Vector2f GameObject::GetPosition()
+{
+	return sf::Vector2f();
+}
+
 bool GameObject::isActive()
 {
 	return m_active;

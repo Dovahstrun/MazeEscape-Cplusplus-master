@@ -29,6 +29,7 @@ void Level::Draw(sf::RenderTarget & _target)
 {
 	//Create and update camera
 	sf::View camera = _target.getDefaultView();
+	camera.setCenter(m_player->GetPosition());
 	//TODO: Follow player with camera
 
 	// Draw game world to the window
@@ -98,6 +99,8 @@ void Level::loadLevel(int _levelToLoad)
 	{
 		delete m_updateList[i];
 	}
+
+	//FUCKING THING NOT WORKING, DELETE IS BREAKING IT, REMEMBER THIS FUCKING THING FOR GODS SAKE OH MY GOD
 
 	//Clear out the lists
 	m_updateList.clear();
