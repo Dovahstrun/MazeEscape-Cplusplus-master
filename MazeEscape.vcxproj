@@ -130,6 +130,7 @@
     <ClCompile Include="Coin.cpp" />
     <ClCompile Include="Exit.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="Hazard.cpp" />
     <ClCompile Include="Key.cpp" />
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="Main.cpp" />
@@ -150,6 +151,7 @@
     <ClInclude Include="Coin.h" />
     <ClInclude Include="Exit.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="Hazard.h" />
     <ClInclude Include="Health.h" />
     <ClInclude Include="Key.h" />
     <ClInclude Include="Level.h" />
@@ -161,6 +163,11 @@
     <ClInclude Include="StaticObject.h" />
     <ClInclude Include="TextObject.h" />
     <ClInclude Include="Wall.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="levels\Level1.txt" />
+    <Text Include="levels\Level2.txt" />
+    <Text Include="levels\Level3.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -22,6 +22,27 @@ void Exit::Update(sf::Time _frameTime)
 	}
 }
 
+void Exit::Collide(GameObject & _collider)
+{
+	//Only do something if thing touched was player
+	Player* castPlayer = dynamic_cast<Player*>(&_collider);
+
+	//Only do the thing if player is not null
+	if (castPlayer != nullptr)
+	{
+		//TODO: Load next level
+
+		if (castPlayer->GetKey())
+		{
+			castPlayer->advanceLevel();
+		}
+	}
+
+
+	//Do something based on type of pickup
+	//Disappear
+}
+
 void Exit::SetPlayer(Player * _player)
 {
 	m_player = _player;

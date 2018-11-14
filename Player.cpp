@@ -3,6 +3,7 @@
 #include "AssetManager.h"
 #include "Wall.h"
 
+
 //Constants
 #define SPEED 500.0f
 
@@ -11,6 +12,8 @@ Player::Player()
 	, m_score(0)
 	, m_key(false)
 	, m_animationSystem()
+	, m_level(nullptr)
+	//, m_deathSound()
 {
 	m_sprite.setTexture(AssetManager::GetTexture("graphics/PlayerWalkDown1.png"));
 
@@ -28,6 +31,11 @@ Player::Player()
 	runDown.SetLoop(true);
 
 	m_animationSystem.Play("runDown");
+
+	//Set up sounds
+	//m_deathSound.setBuffer(AssetManager::GetSoundBuffer("audio/death.wav"));
+
+
 }
 
 void Player::Update(sf::Time _frameTime)
@@ -101,4 +109,28 @@ bool Player::GetKey()
 void Player::ChangeKey(bool _keyChange)
 {
 	m_key = _keyChange;
+}
+
+void Player::Kill()
+{
+	//Reload current level
+	if (m_level != nullptr)
+	{
+		m_level->ReloadLevel();
+		//m_deathSound.play();
+	}
+}
+
+void Player::setLevel(Level * _newLevel)
+{
+	m_level = _newLevel;
+}
+
+void Player::advanceLevel()
+{
+	if (m_level != nullptr)
+	{
+		m_level->loadLevel(m_level->GetCurrentLevel()+1);
+	}
+	
 }

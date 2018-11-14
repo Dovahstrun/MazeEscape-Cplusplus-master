@@ -1,3 +1,7 @@
+//Library Includes
+#include <iostream>
+#include <fstream>
+
 //Project Includes
 
 #include "Level.h"
@@ -8,13 +12,15 @@
 #include "score.h"
 #include "Coin.h"
 #include "Key.h"
+#include "Hazard.h"
 
 Level::Level()
 	: m_player(nullptr)
 	, m_updateList()
 	, m_drawSpriteList()
 	, m_drawUIList()
-	,m_collisionList()
+	, m_collisionList()
+	, m_currentLevel(0)
 {
 	loadLevel(1);
 }
@@ -61,6 +67,7 @@ void Level::Update(sf::Time _frameTime)
 		}
 	}
 
+
 	// -----------------------------------------------
 	// Collision Section
 	// -----------------------------------------------
@@ -98,46 +105,123 @@ void Level::loadLevel(int _levelToLoad)
 	m_drawUIList.clear();
 	m_collisionList.clear();
 
-	///Setup all the game objects
+	///Setup everything
 
+	//Set current level
+	m_currentLevel = _levelToLoad;
+
+	//Set up all the game objects
+
+	//Open our file for reading
+	std::ifstream inFile;
+	std::string fileName = "levels/Level" + std::to_string(m_currentLevel) + ".txt";
+	inFile.open(fileName);
+
+	//Make sure the file was opened
+	if (!inFile)
+	{
+		std::cerr << "Unable to open file " + fileName;
+		exit(1); //Call system to stop program with error	
+	}
+
+	//Set the starting x and y coords used to position level objects
+	float x = 0.0f;
+	float y = 0.0f;
+
+	//Define the spacing we will use for our grid
+	const float Y_SPACE = 100.0f;
+	const float X_SPACE = 100.0f;
+
+	//Create the player first as other objects will need to reference it
 	Player* ourPlayer = new Player();
-	ourPlayer->SetPosition(0.0f, 0.0f);
-	m_updateList.push_back(ourPlayer);
+	m_player = ourPlayer;
 
+	//Reading each character one by one from the file...
+	char ch;
+	//Each time, try to read the next character, execute body of loop
+	while (inFile >> std::noskipws >> ch)//the noskipws means we will include the white space (spaces)
+	{
+		//Perform actions based on what character was read in
+		if (ch == ' ')
+		{
+			x += X_SPACE;
+		}
+		else if (ch == '\n')
+		{
+			y += Y_SPACE;
+			x = 0;
+		}
+		else if (ch == 'W')
+		{
+			Wall* ourWall = new Wall();
+			ourWall->SetPosition(x, y);
+			m_updateList.push_back(ourWall);
+			m_collisionList.push_back(std::make_pair(ourPlayer, ourWall));
+			m_drawSpriteList.push_back(ourWall);
+		}
+		else if (ch == 'C')
+		{
+			Coin* ourCoin = new Coin();
+			ourCoin->SetPosition(x, y);
+			m_updateList.push_back(ourCoin);
+			m_collisionList.push_back(std::make_pair(ourCoin, ourPlayer));
+			m_drawSpriteList.push_back(ourCoin);
+		}
+		else if (ch == 'K')
+		{
+			Key* ourKey = new Key();
+			ourKey->SetPosition(x, y);
+			m_updateList.push_back(ourKey);
+			m_collisionList.push_back(std::make_pair(ourKey, ourPlayer));
+			m_drawSpriteList.push_back(ourKey);
+		}
+		else if (ch == 'E')
+		{
+			Exit* ourExit = new Exit();
+			ourExit->SetPosition(x, y);
+			ourExit->SetPlayer(ourPlayer);
+			m_updateList.push_back(ourExit);
+			m_collisionList.push_back(std::make_pair(ourExit, ourPlayer));
+			m_drawSpriteList.push_back(ourExit);
+		}
+		else if (ch == 'H')
+		{
+			Hazard* ourHazard = new Hazard();
+			ourHazard->SetPosition(x, y);
+			m_updateList.push_back(ourHazard);
+			m_collisionList.push_back(std::make_pair(ourHazard, ourPlayer));
+			m_drawSpriteList.push_back(ourHazard);
+		}
+		else if (ch == 'P')
+		{
+			ourPlayer->SetPosition(x, y);
+			ourPlayer->setLevel(this);
+			m_updateList.push_back(ourPlayer);
+			m_drawSpriteList.push_back(ourPlayer);
+		}
+		else
+		{
+			std::cerr << "Unrecognised character in level file: " << ch;
+		}
+	}
 
-	Coin* ourCoin = new Coin();
-	ourCoin->SetPosition(300.0f, 300.0f);
-	m_updateList.push_back(ourCoin);
-	m_collisionList.push_back(std::make_pair(ourCoin, ourPlayer));
+	//Close the file now that we're done
+	inFile.close();
 
-
+	//Score - position not dependent on level
 	Score* ourScore = new Score();
 	ourScore->SetPlayer(ourPlayer);
 	m_updateList.push_back(ourScore);
 	m_drawUIList.push_back(ourScore);
+	
+}
 
-	Key* ourKey = new Key();
-	ourKey->SetPosition(750.0f, 500.0f);
-	m_updateList.push_back(ourKey);
-	m_collisionList.push_back(std::make_pair(ourKey, ourPlayer));
+void Level::ReloadLevel()
+{
+	loadLevel(m_currentLevel);
+}
 
-
-	Exit* ourExit = new Exit();
-	ourExit->SetPosition(1000.0f, 150.0f);
-	ourExit->SetPlayer(ourPlayer);
-	m_updateList.push_back(ourExit);
-
-
-	Wall* ourWall = new Wall();
-	ourWall->SetPosition(700.0f, 800.0f);
-	m_updateList.push_back(ourWall);
-	m_collisionList.push_back(std::make_pair(ourPlayer, ourWall));
-
-
-	//Add objects to draw lists
-	m_drawSpriteList.push_back(ourCoin);
-	m_drawSpriteList.push_back(ourKey);
-	m_drawSpriteList.push_back(ourExit);
-	m_drawSpriteList.push_back(ourWall);
-	m_drawSpriteList.push_back(ourPlayer);
+int Level::GetCurrentLevel()
+{
+	return m_currentLevel;
 }

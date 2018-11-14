@@ -19,7 +19,7 @@ int main()
 
 	// Window - to draw to the screen
 	sf::RenderWindow gameWindow;
-	gameWindow.create(sf::VideoMode::getDesktopMode(), "Maze Escape", sf::Style::Titlebar | sf::Style::Close | sf::Style::Fullscreen);
+	gameWindow.create(sf::VideoMode::getDesktopMode(), "Maze Escape", sf::Style::Titlebar | sf::Style::Close);
 
 	// Seed our random number generator 
 	srand(time(NULL));
