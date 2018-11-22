@@ -44,7 +44,6 @@ void Level::Draw(sf::RenderTarget & _target)
 	}
 
 
-
 	// Draw UI to the window
 	_target.setView(_target.getDefaultView());
 	//Draw UI objects
@@ -56,6 +55,8 @@ void Level::Draw(sf::RenderTarget & _target)
 		}
 	}
 }
+
+
 
 void Level::Update(sf::Time _frameTime)
 {
